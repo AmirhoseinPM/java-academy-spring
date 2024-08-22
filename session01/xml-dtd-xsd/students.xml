@@ -1,0 +1,12 @@
+<students>
+	<student>
+		<student_id>1</student_id>
+		<name>ali</name>
+		<family>taghavi</family>
+	</student>
+	<student>
+		<student_id>2</student_id>
+		<name>amir</name>
+		<family>rajabi</family>
+	</student>
+</students>

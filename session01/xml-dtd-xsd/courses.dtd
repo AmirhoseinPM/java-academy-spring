@@ -1,0 +1,5 @@
+<!ELEMENT courses (course+)>
+<!ELEMENT course (course_id,name,units)>
+<!ELEMENT course_id (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT units (#PCDATA)>

@@ -1,0 +1,42 @@
+Application servers:
+
+1. GlassFish 
+- GlassFish Community
+- CDDL, GPL + classpath exception
+
+2. iPlanet Web server 
+- Oracle corporation
+- Proprietary
+
+3. JBoss Enterprise Application Platform 
+- Red Hat
+- LGPL
+
+4. Jetty  (WebContainer)
+- Eclipse Foundation
+- Apache 2.0, EPL
+
+5. Oracle Container for J2EE 
+- Oracle Corporation
+- Proprietary
+
+6. Tomcat (WebContainer)
+- ASF
+- Apache License v2
+
+7. TomEE (WebProfile)
+- ASF
+- Apache License
+
+8. WebObject (WebContainer)
+- Apple Inc.
+- Proprietary
+
+9. IBM WebSphere Application Server 
+- IBM  
+- Proprietary
+
+10. WebSphere AS Community Edition 
+- IBM 
+- Proprietary
+	

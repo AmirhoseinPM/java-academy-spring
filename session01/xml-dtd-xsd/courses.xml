@@ -1,0 +1,12 @@
+<courses>
+	<course>
+		<course_id>1</course_id>
+		<name>math</name>
+		<units>3</units>
+	</course>
+	<course>
+		<course_id>2</course_id>
+		<name>english</name>
+		<units>2</units>
+	</course>
+</courses>
