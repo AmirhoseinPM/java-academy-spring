@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+                http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+                
+	<bean id="Service1" class="pooyan.train.EmailService"></bean>
+	<bean id="Service2" class="pooyan.train.MessageService"></bean>
+		
+	<bean id="Client1" class="pooyan.train.ClientA">
+		<constructor-arg ref="Service1"/>
+		<property name="service" ref="Service1"/>
+	</bean>
+	<bean id="Client2" class="pooyan.train.ClientB">
+		<constructor-arg ref="Service2"/>
+		<property name="service" ref="Service2"/>
+	</bean>
+	
+	
+	<bean id="staticServiceFactory"
+	  class="pooyan.train.StaticServiceFactory"
+	  factory-method="getService">
+	    <constructor-arg value="0" />
+	</bean> 
+	<bean id="Client3" class="pooyan.train.ClientA">
+	    <property name="service" ref="staticServiceFactory" />
+	    <constructor-arg ref="staticServiceFactory"/>
+	</bean>
+	
+	<bean id="InstanceServiceFactory"
+		class="pooyan.train.ServiceFactory"></bean>
+	<bean id="MessageService" 
+		class="pooyan.train.ServiceFactory"
+		factory-method="getService" 
+		factory-bean="InstanceServiceFactory" >
+    		<constructor-arg value="1" />
+		</bean>
+	<bean id="Client4" class="pooyan.train.ClientB">
+		<property name="service" ref="MessageService"></property>
+		<constructor-arg ref="MessageService"></constructor-arg>
+	</bean>
+	
+</beans>

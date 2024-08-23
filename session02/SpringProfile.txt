@@ -1,0 +1,140 @@
+source:
+https://naveen-metta.medium.com/unveiling-the-power-of-spring-profiling-a-comprehensive-guide-with-examples-1f66807d3a62
+
+- Profiling in Spring enables developers to configure their applications 
+to behave differently under various conditions, leading to 
+improved performance, enhanced maintainability, and streamlined troubleshooting.
+
+-  Spring’s profiling capabilities allow developers to create 
+tailored configurations for distinct environments, 
+such as development, testing, and production. 
+- The primary goal is to optimize 
+the application’s behavior and 
+resource usage across diverse scenarios.
+
+Benefits of Spring Profiling:
+- Environment-Specific Configurations.
+- Performance Optimization:
+By providing insights into an application’s performance characteristics, 
+profiling helps identify and rectify performance bottlenecks.
+Developers can analyze resource usage and code behavior in different environments,
+leading to targeted optimizations.
+- Troubleshooting:
+Profiling simplifies troubleshooting by allowing developers to isolate and diagnose
+issues within specific environments. With profile-specific configurations, 
+developers can focus on the relevant aspects of the codebase without 
+affecting other parts of the application.
+
+Profiling :
+- Profile-Specific Configuration:
+@Profile("development")
+- Property-based Configuration:
+spring.profiles.active=development
+- Programmatic Configuration:
+Environment interface in Spring provides methods to check the active profiles.
+
+@Service
+public class MyService {
+
+    @Autowired
+    private Environment environment;
+
+    public void doSomething() {
+	if (environment.acceptsProfiles("development"))...
+
+Profile Activation via Command Line:
+java -jar my-application.jar --spring.profiles.active=production
+
+Conditional Beans:
+@Component
+@ConditionalOnProfile("development")
+public class DevelopmentSpecificBean {
+    // Bean logic for development profile
+}
+
+Database Configuration:
+@Configuration
+@Profile("development")
+public class DevelopmentDatabaseConfig {
+    // Development database configuration
+}
+@Configuration
+@Profile("production")
+public class ProductionDatabaseConfig {
+    // Production database configuration
+}
+
+Logging Configuration:
+@Configuration
+@Profile("development")
+public class DevelopmentLoggingConfig {
+    // Development logging configuration
+}
+
+@Configuration
+@Profile("production")
+public class ProductionLoggingConfig {
+    // Production logging configuration
+}
+
+External Service Integration:
+@Configuration
+@Profile("development")
+public class DevelopmentServiceConfig {
+    // Development service integration configuration
+}
+
+@Configuration
+@Profile("production")
+public class ProductionServiceConfig {
+    // Production service integration configuration
+}
+
+SecurityConfiguration:
+@Configuration
+@Profile("development")
+public class DevelopmentSecurityConfig {
+    // Development security configuration
+}
+
+@Configuration
+@Profile("production")
+public class ProductionSecurityConfig {
+    // Production security configuration
+}
+
+
+Caching Strategy:
+@Service
+public class MyCachingService {
+
+    @Autowired
+    private Environment environment;
+
+    @Cacheable(value = "myCache", condition = "@environment.acceptsProfiles('production')")
+    public Object cachedMethod() {
+        // Cached method logic
+    }
+}
+
+Dynamic DataSource Routing:
+@Service
+public class MyDatabaseService {
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    @Qualifier("dataSourceDevelopment")
+    private DataSource dataSourceDevelopment;
+
+    @Autowired
+    @Qualifier("dataSourceProduction")
+    private DataSource dataSourceProduction;
+
+    public DataSource getDataSource() {
+        return environment.acceptsProfiles("development") ? dataSourceDevelopment : dataSourceProduction;
+    }
+}
+
+

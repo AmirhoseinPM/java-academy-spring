@@ -1,0 +1,150 @@
+Invertion Of Control
+--------------------
+
+What Is Inversion of Control?
+- Inversion of Control is a principle in software engineering which transfers
+the control of objects or portions of a program to a container or framework.
+
+Advantages:
+- decoupling the execution of a task from its implementation
+- making it easier to switch between different implementations
+- greater modularity of a program
+- greater ease in testing a program by isolating a component or mocking its dependencies, 
+- and allowing components to communicate through contracts
+
+Mechanisms to achieve IOC:
+- Strategy design pattern
+- Service Locator pattern
+- Factory pattern
+- Dependency Injection (DI).
+
+What Is Dependency Injection?
+- Dependency injection is a pattern we can use to implement IoC, 
+where the control being inverted is setting an object’s dependencies.
+- Connecting objects with other objects, or “injecting” objects into other objects, 
+is done by an assembler rather than by the objects themselves.The Spring IoC Container
+
+The Spring IoC Container
+- IoC container is a common characteristic of frameworks that implement IoC.
+- Interface ApplicationContext represents the IoC container. 
+- The Spring container is responsible for:
+	instantiating, 
+	configuring,
+	assembling,
+objects known as beans, as well as managing their life cycles.
+
+- to assemble beans, the container uses configuration metadata, 
+which can be in the form of XML configuration or annotations
+
+ApplicationContext interface implementations:
++ standalone applications: 
+	- AnnotationConfigApplicationContext, 
+	- ClassPathXmlApplicationContext
+	- FileSystemXmlApplicationContext
++ web applications:
+	- WebApplicationContext
+
+
+Dependency Injection in Spring can be done through:
+- constructors
+- setters
+- fields
+
+Constructor-Based Dependency Injection:
+-----------------------------------
+- the container will invoke a constructor with arguments 
+each representing a dependency we want to set.
+
+@Configuration annotation 
+- indicates that the class is a source of bean definitions.
+- We can also add it to multiple configuration classes.
+
+@Bean annotation 
+- on a method to define a bean. 
+- If we don’t specify a custom name, 
+then the bean name will default to the method name.
+
+Bean Scopes
+---------------
+- Singleton Scope: 
+Spring first checks if a cached instance of the bean already exists, 
+and only creates a new one if it doesn’t
+- Prototype Scope:
+the container returns a new bean instance for each method call
+
+Setter-based DI
+---------------
+- the container will call setter methods of our class 
+after invoking a no-argument constructor or 
+no-argument static factory method to instantiate the bean.
+
+Field-Based Dependency Injection
+- inject the dependencies with @Autowired annotation
+- spring: "we don’t recommend using Field-Based DI"
+
+@Autowire
+
+
+@Component
+- We can use @Component across the application to mark the beans 
+as Spring’s managed components.
+- Spring will only pick up and register beans with @Component, 
+and doesn’t look for @Service and @Repository in general.
+- @Service and @Repository are special cases of @Component. 
+They are technically the same, but we use them for the different purposes.
+
+@Service
+- We mark beans with @Service to indicate that they’re holding the business logic. 
+Besides being used in the service layer, there isn’t any other special use for this annotation.
+
+@Repository
+- @Repository’s job is to catch persistence-specific exceptions 
+and re-throw them as one of Spring’s unified unchecked exceptions.
+For this, Spring provides PersistenceExceptionTranslationPostProcessor, 
+which we are required to add in our application context 
+(already included if we’re using Spring Boot):
+
+<bean class=
+  "org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+This bean post processor adds an advisor to any bean that’s annotated with @Repository.
+
+@Value
+we’ll need a properties file to define the values we want to inject with 
+the @Value annotation. And so, we’ll first need to define a @PropertySource
+in our configuration class — with the properties file name.
+@PropertySource("classpath:application.properties")
+
+application.properties:
+--------------
+value.from.file=Value got from the file
+priority=high
+listOfValues=A,B,C
+valuesMap={key1: '1', key2: '2', key3: '3'}
+--------------
+
+@Value("${value.from.file}")
+@Value("${unknown.param:some default}")
+
+@Value("${listOfValues}")
+private String[] valuesArray;
+
+SpEL examples:
+@Value("#{systemProperties['priority']}")
+@Value("#{systemProperties['unknown'] ?: 'some default'}")
+@Value("#{someBean.someValue}")
+@Value("#{'${listOfValues}'.split(',')}")
+private List<String> valuesList;
+
+@Value("#{${valuesMap}.key1}")
+@Value("#{${valuesMap}['unknownKey']}") -> set null
+@Value("#{${unknownMap : {key1: '1', key2: '2'}}}")
+@Value("#{${valuesMap}['unknownKey'] ?: 5}")
+
+@Value("#{${valuesMap}.?[value>'1']}")
+private Map<String, Integer> valuesMapFiltered;
+
+
+
+
+

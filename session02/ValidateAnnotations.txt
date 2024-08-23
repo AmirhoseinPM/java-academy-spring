@@ -1,0 +1,176 @@
+Reference:
+https://medium.com/@himani.prasad016/validations-in-spring-boot-e9948aa6286b
+
+Annotations for validate beans
+-------------------------------------
+@NotNull: Ensures a field is not null.
+@NotBlank: Enforces non-nullity and requires at least one non-whitespace character.
+@NotEmpty: Guarantees that collections or arrays are not empty.
+@Min(value): Checks if a numeric field is greater than or equal to the specified minimum value.
+@Max(value): Checks if a numeric field is less than or equal to the specified maximum value.
+@Size(min, max): Validates if a string or collection size is within a specific range.
+@Pattern(regex): Verifies if a field matches the provided regular expression.
+@Email: Ensures a field contains a valid email address format.
+@Digits(integer, fraction): Validates that a numeric field has a specified number of integer and fraction digits.
+@Past and @Future : Checks that a date or time field is in the past and future respectively.
+@AssertTrue and @AssertFalse: Ensures that a boolean field is true. and false respectively.
+@CreditCardNumber: Validates that a field contains a valid credit card number.
+@Valid: Triggers validation of nested objects or properties.
+@Validated: Specifies validation groups to be applied at the class or method level.
+--------------------------
+public class UserRegistrationForm {
+    @NotBlank(message = "Please provide a username")
+    private String username;
+    @Email(message = "Please provide a valid email address")
+    private String email;
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String password;
+    // Getters and setters
+}
+--------------------
+@RestController
+@RequestMapping("/user")
+public class ApiController {
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("Validation failed");
+        }
+        userService.saveUser(user);
+        return ResponseEntity.ok("User created successfully");
+    }
+}
+-------------------------------
+public class ShippingAddress {
+    @NotNull
+    private String street;
+    @NotNull
+    @Size(min = 2, max = 50)
+    private String city;
+    @NotNull
+    private String zipCode;
+}
+--------------------------------
+public class Order {
+    @NotNull
+    private String orderId;
+    @Valid
+    private ShippingAddress shippingAddress;
+    // Other properties, getters, setters...
+}
+---------------------------------
+@Controller
+public class UserController {
+    @PostMapping("/register")
+    public String registerUser(@Valid UserRegistrationForm form, BindingResult result) {
+        if (result.hasErrors()) {
+            return "registrationForm"; // Return back to the form with error messages
+        }
+        // If no errors, proceed with user registration
+        // ...
+        return "redirect:/login";
+    }
+}
+------------------------------------
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @PostMapping
+    public ResponseEntity<String> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // Handle validation errors
+            return ResponseEntity.badRequest().body("Validation errors found.");
+        }
+        // Process user and create a new user
+        // ...
+        return ResponseEntity.ok("User created successfully.");
+    }
+}
+-----------------------------------
+Global Exception Handling:
+-----
+@ControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
+        // Create a map of field errors
+        // Return appropriate error response
+    }
+}
+-------------------------------
+1. Custom Validation Annotation:
+
+@Target({ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = CustomValidator.class)
+public @interface CustomValidation {
+    String message() default "Invalid value";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+}
+
+2. Caustom Validator:
+
+public class CustomValidator implements ConstraintValidator<CustomValidation, String> {
+    @Override
+    public void initialize(CustomValidation constraintAnnotation) {
+    }
+
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        // Implement your validation logic here
+        // Return true if validation passes, false otherwise
+        return value != null && value.startsWith("ABC"); // Example validation condition
+    }
+}
+
+public class Data {
+    @CustomValidation
+    private String customField;
+}
+-------------------------------------------
+Validation in the Service Layer:
+
+@Service
+@AllArgsContructor
+public class UserService {
+    private final Validator validator;
+    public void createUser(User user) {
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        if (!violations.isEmpty()) {
+            // Handle validation errors
+        }
+    }
+}
+
+------------
+BindingResult
+
+RestController
+@RequestMapping("/api")
+public class ValidationController {
+
+    @Autowired
+    private Validator validator; // Autowire the validator
+
+    @PostMapping("/validate")
+    public ResponseEntity<String> validateData(@RequestBody @Valid Data data, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (ObjectError error : bindingResult.getAllErrors()) {
+                String errorMessage = error.getDefaultMessage();
+            }
+            return ResponseEntity.badRequest().body("Validation failed");
+        }
+        return ResponseEntity.ok("Data validated and processed successfully");
+    }
+}
+
+
+
+
+
+
+

@@ -1,0 +1,94 @@
+Reference:
+https://naveen-metta.medium.com/deep-dive-into-aspect-oriented-programming-aop-in-spring-and-spring-boot-afcb29141cbd
+
+Spring Aspect Oriented Programming
+------------------------------------
+- powerful paradigm for modularizing cross-cutting concerns in core application
+like logging, security, and transactions.
+
+- programming paradigm that enables the modularization 
+of cross-cutting concerns in software applications
+
+- Aspect: An aspect is a module that encapsulates a cross-cutting concern. 
+It contains advice and pointcuts.
+
+- Advice: Advice is the code that runs when a particular pointcut is matched. 
+There are different types of advice, including “before,” “after,” “around,” and “after-throwing.”
+
+- Pointcut: A pointcut is an expression that defines where an aspect’s advice 
+should be applied in the codebase. It selects specific join points in your application.
+
+- Join Point: A join point is a specific point in the execution of a program, 
+such as a method call, constructor invocation, or field access.
+
+ Cross-Cutting Concerns: These are concerns that affect multiple parts of your application,
+like logging, security, or transactions.
+
+----------------------------------
+
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+
+@Aspect
+public class LoggingAspect {
+
+    @Before("execution(* com.example.demo.*.*(..))")
+    public void logBefore() {
+        System.out.println("Before method execution");
+    }
+}
+
+------
+Defining Pointcuts
+Pointcuts define where advice should be applied. You can use expressions 
+to specify join points. For instance, “execution(* com.example.demo.*.*(..))” 
+in the above example selects all method executions in the specified package.
+------
+
+- @Before Advice: It’s used for actions to be taken before the method execution. 
+For example, you can use it for logging, security checks, or pre-processing.
+
+- @After Advice: This advice is executed after the method execution. 
+It’s useful for tasks like cleaning up resources or finalizing operations.
+
+- @Around Advice: This is the most powerful advice type. 
+It wraps around the method and can control its execution. 
+You can modify input and output, perform additional actions before and after the method,
+and even prevent the method from executing.
+
+- @AfterThrowing Advice: Executed when an exception is thrown during method execution. 
+You can handle or log exceptions with this advice.
+---------------------
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+@SpringBootApplication
+@EnableAspectJAutoProxy
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+---------------------
+Advanced Aspect:
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Loggable {
+}
+
+@Aspect
+public class CustomAspect {
+    @Before("@annotation(Loggable)")
+    public void logMethod(JoinPoint joinPoint) {
+        // Log method execution
+    }
+}
+
+In this example, the @Loggable annotation is used to mark methods that should be logged.
+ The @Before advice then logs the execution of methods annotated with @Loggable.
+
+
+
