@@ -1,0 +1,8 @@
+"#{'${bankiran.username}'.toUpperCase()}"
+-----------------------------------------
+- '${bankiran.username}' :
+get value of "bankiran.username" field in appliaction properties
+
+- "#{}" -> using Spring Expression Language
+
+- "string".toUpperCase() -> STRING
